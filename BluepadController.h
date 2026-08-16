@@ -8,82 +8,100 @@ class GreeController
 {
 public:
 
-    GreeController(
-        int motorPwmPin,
-        int motorDirPin,
-        int pwmChannel = 0,
-        int pwmFrequency = 20000,
-        int pwmResolution = 8
-    );
+    GreeController();
 
+    // Initialize Bluepad32
     void begin();
-    void update();
 
-    float getSpeed();
-    float getInputForce();
-    float getMaxLimit();
+    // Update controller state
+    bool update();
+
+    // Controller status
+    bool connected();
+
+    // =================================================
+    // Buttons
+    // =================================================
+
+    bool buttonA();
+    bool buttonB();
+    bool buttonX();
+    bool buttonY();
+
+    bool dpadUp();
+    bool dpadDown();
+    bool dpadLeft();
+    bool dpadRight();
+
+    bool buttonL1();
+    bool buttonR1();
+
+    bool buttonL3();
+    bool buttonR3();
+
+    bool buttonSelect();
+    bool buttonStart();
+
+    // =================================================
+    // Triggers
+    // Returns 0.0 -> 1.0
+    // =================================================
+
+    float leftTrigger();
+    float rightTrigger();
+
+    // =================================================
+    // Analog sticks
+    // Returns -1.0 -> +1.0
+    // =================================================
+
+    float leftStickX();
+    float leftStickY();
+
+    float rightStickX();
+    float rightStickY();
+
+    // =================================================
+    // Raw values
+    // =================================================
+
+    int rawLeftTrigger();
+    int rawRightTrigger();
+
+    int rawLeftStickX();
+    int rawLeftStickY();
+
+    int rawRightStickX();
+    int rawRightStickY();
+
+    // =================================================
+    // Controller access
+    // =================================================
+
+    ControllerPtr getController();
+
 
 private:
 
-    // =================================================
-    // Controller
-    // =================================================
-
-    ControllerPtr _controllers[BP32_MAX_GAMEPADS];
+    ControllerPtr _controller;
 
     static GreeController *_instance;
 
-    static void onConnectedController(ControllerPtr ctl);
-    static void onDisconnectedController(ControllerPtr ctl);
+    static void onConnected(
+        ControllerPtr ctl
+    );
 
-    void handleConnectedController(ControllerPtr ctl);
-    void handleDisconnectedController(ControllerPtr ctl);
+    static void onDisconnected(
+        ControllerPtr ctl
+    );
 
-    void processControllers();
-    void processGamepad(ControllerPtr ctl);
+    void handleConnected(
+        ControllerPtr ctl
+    );
 
-    // =================================================
-    // Motor
-    // =================================================
-
-    int _motorPwmPin;
-    int _motorDirPin;
-
-    int _pwmChannel;
-    int _pwmFrequency;
-    int _pwmResolution;
-
-    // =================================================
-    // Speed
-    // =================================================
-
-    float _currentSpeed;
-    float _inputForce;
-    float _maxLimit;
-
-    // =================================================
-    // Speed modes
-    // =================================================
-
-    static constexpr float MODE_30 = 77.0f;
-    static constexpr float MODE_60 = 153.0f;
-    static constexpr float MODE_90 = 230.0f;
-
-    int _mode;
-
-    unsigned long _lastModeChange;
-
-    // =================================================
-    // Internal functions
-    // =================================================
-
-    void setSpeed();
-
-    void setMode(int mode);
-    void updateControllerLED(ControllerPtr ctl);
-
-    float getThrottle(ControllerPtr ctl);
-    float getBrake(ControllerPtr ctl);
+    void handleDisconnected(
+        ControllerPtr ctl
+    );
 };
 
 #endif
